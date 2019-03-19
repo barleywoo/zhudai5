@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script>
+        function uaredirect(murl) {
+            var userAgentInfo = navigator.userAgent;
+            var Agents = new Array("Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod");
+            var flag = true;
+            for (var v = 0; v < Agents.length; v++) {
+                if (userAgentInfo.indexOf(Agents[v]) > 0) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                location.replace(murl);
+            }
+        }
+
+        // 去掉跳转PC
+        //uaredirect("/sem/index_pc.html?t=lyhdqt");
+    </script>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>贷款申请页</title>
+    <link rel="stylesheet" href="./files/style.css">
+    <link rel="stylesheet" href="./files/header.css">
+    <link rel="stylesheet" href="./files/index2.css">
+    <link rel="stylesheet" href="./files/mobiscroll01.css">
+    <script type="text/javascript" src="./files/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="./files/jquery.xdomainrequest.min.js"></script>
+    <script type="text/javascript" src="./files/base64.js"></script>
+    <script type="text/javascript">
+        var pathName=window.document.location.pathname;
+        var jiekou_site_url = pathName.substring(0,pathName.substr(1).indexOf('/')+1);//'/credit';
+        jQuery.support.cors = true;
+
+        //====######## 通用函数 start ########====
+        function chesex(obj, k) {
+            var i = 1;
+            var sex = document.getElementById("sex");
+            sex.value = k;
+
+            for (i; i < 3; i++) {
+                var j = document.getElementById("sex" + i);
+                j.style.backgroundPosition = "0 1.2rem";
+            }
+            obj.style.backgroundPosition = "0 -1.4rem";
+
+        }
+
+        //用于获取 url参数的方法
+        function getQueryString(name) {
+            var reg = new RegExp('(^|&amp;|&)' + name + '=([^&]*)(&amp;|&|$)', 'i');
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) {
+                return decodeURI(r[2]);
+            }
+            return null;
+        }
+
+        //获取单选框的value值
+        function che(name) {
+            var obj = document.getElementsByName(name);
+            for (var i = 0; i < obj.length; i++) {
+                if (obj[i].checked) {
+                    return obj[i].value;
+                }
+            }
+        }
+
+        //获取滚动条到顶部的距离
+        function getScrollTop() {
+            var scrollTop = 0;
+            if (document.documentElement && document.documentElement.scrollTop) {
+                scrollTop = document.documentElement.scrollTop;
+            } else if (document.body) {
+                scrollTop = document.body.scrollTop;
+            }
+            return scrollTop;
+        }
+
+        //移除class
+        function removeClass(claname) {
+            var tags = document.getElementsByTagName("*");
+            for (var i in tags) {//对标签进行遍历
+                if (tags[i].nodeType == 1) {//判断节点类型
+                    if (tags[i].getAttribute("class") == claname) {//判断和需要CLASS名字相同
+                        tags[i].className = '';
+                    }
+                }
+            }
+        }
+
+        //--获取radio值--
+        function getRadioValue(radioName) {
+            var chkRadio = document.getElementsByName(radioName);
+            for (var i = 0; i < chkRadio.length; i++) {
+                if (chkRadio[i].checked) {
+                    return chkRadio[i].value;
+                }
+            }
+        }
+
+        //返回顶部事件
+        function totop() {
+            document.documentElement.scrollTop = document.body.scrollTop = 0;
+        }
+
+        //返回顶部按钮
+        window.onscroll = function () {
+            var viewheight = window.screen.height;
+            var scr = getScrollTop();
+            var cro = document.getElementById('top-but');
+            if (cro == undefined || cro == null || cro == '') {
+                return '';
+            }
+            if (scr > viewheight) {
+                cro.style.display = 'block';
+            } else if (scr < viewheight) {
+                cro.style.display = 'none';
+            }
+        }
+
+        //计算每月还款
+        function calculation(cl, i) {
+            removeClass('on');//移除已存在的class属性
+            cl.className = cl.className + 'on';//点击增加class="on"
+            var monthlyrepayment = document.getElementById('money-f').innerHTML;//每月还款
+            var loanamount = document.getElementById('loanamount').innerHTML;//借款金额
+            var totalrepayment = document.getElementById('totalrepayment').innerHTML;//还款总额
+            var mon = document.getElementById('mon').value;//借多少
+            var monthlyinterest = document.getElementById('monthlyinterest').value;//月利息
+            if (mon < 1 || mon > 500) {
+                alert("单笔最低借款额度为1万，最高借款额度为500万");
+            } else {
+                //计算后的每月还款金额
+                a = (mon * 10000 * monthlyinterest + (mon * 10000) / i).toFixed(2);
+                document.getElementById('money-f').innerHTML = a + '元';
+                //计算后的借款金额
+                b = mon * 10000;
+                document.getElementById('loanamount').innerHTML = '借款金额：' + b + '元';
+                //计算后的还款总额
+                c = mon * 10000 * monthlyinterest * i + mon * 10000;
+                document.getElementById('totalrepayment').innerHTML = '还款总额：' + c + '元';
+            }
+        }
+
+        //电话号码base64加密
+        function tests(mobile) {
+            var b = new Base64();
+            var mobile = b.encode(mobile);
+            return mobile;
+        }
+
+        //腾讯广点通api函数
+        function requestTxApi(skipurl) {
+            skipurl = skipurl || '';
+            var qz_gdt = $('#qz_gdt').val();
+            var source = $('#t').val();
+            console.log('12');
+            if (qz_gdt != undefined && qz_gdt != '' && source != undefined && source != '') {
+                var json_data = {
+                    'url': window.location.href,
+                    'qz_gdt': qz_gdt,
+                    'source': source,
+                };
+                console.log('7');
+                $.ajax({
+                    type: 'GET',  //这里用GET
+                    url: jiekou_site_url + '/tx_ads/index/user_actions_add.html',
+                    dataType: 'jsonp',  //类型
+                    data: json_data,
+                    jsonp: 'jcallback', //jsonp回调参数，必需
+                    async: false,
+                    success: function (res) {
+                        if (skipurl != '' && skipurl != undefined) {
+                            window.location.href = skipurl;
+                        }
+                    }, //返回的json数据
+                    timeout: 3000,
+                });
+            }
+        }
+
+
+        //百度ocpc
+        function requestBaiDu() {
+            var bd_vid = getQueryString('bd_vid');
+            if (bd_vid) {
+                //来自百度ocpc
+                $.ajax({
+                    type: 'GET',
+                    url: jiekou_site_url + "/baidu_ocpc/index/index.html",
+                    data: {loginUrl: window.location.href, bd_vid: bd_vid},
+                    dataType: 'jsonp',
+                    jsonp: 'jcallback', //jsonp回调参数，必需
+                    async: false,
+                    success: function (res) {
+                        console.log(res);
+                    }
+                });
+            }
+        }
+
+
+        //input里面placeholder提示在IE浏览器显示问题
+        $(function () {
+            handlePlaceholderForIE();
+        });
+
+        function handlePlaceholderForIE() {
+            var jq_version = jQuery().jquery;
+            jq_version = jq_version.substring(0, jq_version.indexOf('.', 2));
+
+            if (jq_version >= 1.9) {
+                jQuery.browser = new Object();
+                jQuery.browser.mozilla = /firefox/.test(navigator.userAgent.toLowerCase());
+                jQuery.browser.webkit = /webkit/.test(navigator.userAgent.toLowerCase());
+                jQuery.browser.opera = /opera/.test(navigator.userAgent.toLowerCase());
+                jQuery.browser.msie = /msie/.test(navigator.userAgent.toLowerCase());
+            }
+            // placeholder attribute for ie7 & ie8
+            if ((jq_version < 1.9 && jQuery.browser.msie && jQuery.browser.version.substr(0, 1) <= 9)
+                ||
+                (jq_version >= 1.9 && jQuery.browser.msie && !$.support.leadingWhitespace)
+            ) {
+                // ie7&ie8
+                jQuery('input[placeholder], textarea[placeholder]').each(function () {
+                    var input = jQuery(this);
+                    jQuery(input).val(input.attr('placeholder'));
+                    jQuery(input).focus(function () {
+                        if (input.val() == input.attr('placeholder')) {
+                            input.val('');
+                        }
+                    });
+                    jQuery(input).blur(function () {
+                        if (input.val() == '' || input.val() == input.attr('placeholder')) {
+                            input.val(input.attr('placeholder'));
+                        }
+                    });
+                });
+            }
+        }
+
+        //====######## 通用函数 end ########====
+    </script>
+    <script type="text/javascript" src="./files/mobiscroll01.js"></script>
+    <script type="text/javascript" src="./files/mobiscroll02.js"></script>
+    <script type="text/javascript" src="./files/newsmob1.js"></script>
+    <script type="text/javascript" src="./files/love_location_array.js"></script>
+    <script type="text/javascript" src="./files/location.js"></script>
+    <script type="text/javascript" src="./files/agereement.js"></script>
+    <script type="text/javascript" src="./files/jquery.event.drag-1.5.min.js"></script>
+    <script type="text/javascript" src="./files/jquery.touchSlider.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var winheight = $(window).height();
+            var winwidth = $(window).width();
+            var mobwidth = winwidth * 0.8;
+            var mobheight = mobwidth / (520 / 350);
+            $("#hezuofang div").css({
+                'width': mobwidth,
+                'height': mobheight,
+            });
+            var i = winheight - $("#hezuofang div").height();
+            var j = winwidth - $("#hezuofang div").width();
+            $("#hezuofang").css({
+                'padding-top': i / 2,
+                'padding-left': j / 2,
+            });
+
+            $(".main_visual").hover(function () {
+                $("#btn_prev,#btn_next").fadeIn()
+            }, function () {
+                $("#btn_prev,#btn_next").fadeOut()
+            });
+            $dragBln = false;
+            $(".main_image").touchSlider({
+                flexible: true,
+                speed: 200,
+                btn_prev: $("#btn_prev"),
+                btn_next: $("#btn_next"),
+                paging: $(".flicking_con a"),
+                counter: function (e) {
+                    $(".flicking_con a").removeClass("on").eq(e.current - 1).addClass("on");
+                }
+            });
+            $(".main_image").bind("mousedown", function () {
+                $dragBln = false;
+            });
+            $(".main_image").bind("dragstart", function () {
+                $dragBln = true;
+            });
+            $(".main_image a").click(function () {
+                if ($dragBln) {
+                    return false;
+                }
+            });
+            timer = setInterval(function () {
+                $("#btn_next").click();
+            }, 3000);
+            $(".main_visual").hover(function () {
+                clearInterval(timer);
+            }, function () {
+                timer = setInterval(function () {
+                    $("#btn_next").click();
+                }, 3000);
+            });
+            $(".main_image").bind("touchstart", function () {
+                clearInterval(timer);
+            }).bind("touchend", function () {
+                timer = setInterval(function () {
+                    $("#btn_next").click();
+                }, 3000);
+            });
+
+        });
+    </script>
+    <script type="text/javascript">
+        //成功调用转化代码
+        function conversion() {
+            ;
+        }
+    </script>
+    <style>
+        .header-area {
+            background: #fff;
+            border-bottom: none;
+        }
+
+        .header-area img {
+            margin-top: 1rem
+        }
+
+        .apply_ti {
+            background: #f2f2f2;
+            color: #323232;
+            border: none;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .sexradio {
+            height: 3.7rem;
+            line-height: 3.7rem;
+            font-size: 1.6rem;
+            float: right;
+            width: 41%;
+            margin-right: -2%
+        }
+
+        .pingan {
+            padding: 3% 2% 2% 2%
+        }
+
+        .pingan .pdiv {
+            border-radius: 3px;
+            height: 3.7rem;
+            line-height: 3.7rem
+        }
+
+        .pingan .pdiv input {
+            height: 3.5rem;
+        }
+
+        .pingan select {
+            width: 47.5%;
+            height: 4rem;
+            border: 1px solid #CCC;
+            color: #000;
+            font-size: 1.6rem;
+            appearance: none;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            background-color: #FFFFFF;
+            border-radius: 3px;
+            padding: 0 6px;
+        }
+
+        .footer-area {
+            background: #535353;
+        }
+
+        .absolutesss {
+            border-left: 1px solid #d2d2d2;
+            position: absolute;
+            text-align: center;
+            width: 18%;
+            font-size: 1.8rem;
+            left: 80%
+        }
+
+        .sexc {
+            width: 40%;
+            height: 3rem;
+            float: left;
+            background: url('./files/radioxxx.jpg') 0 1.2rem no-repeat;
+            background-size: 2rem 4rem;
+        }
+
+        #hezuofang {
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            line-height: 100%;
+            position: fixed;
+            background: url(./files/pop-up-box-bg.png);
+            z-index: 1000;
+        }
+
+        #car {
+            font-family: "microsoft yahei", arial
+        }
+
+        #house {
+            font-family: "microsoft yahei", arial
+        }
+
+        #baodan_is {
+            font-family: "microsoft yahei", arial
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header-area mb10">
+        <div class="header-zone">
+            <h1>
+                <a href="#">
+                    <img src="./files/index_logo_03.jpg" alt="">
+                </a>
+            </h1>
+        </div>
+    </div>
+    <div class="main_visual">
+        <div class="flicking_con">
+            <a href="#" class="">1</a>
+            <a href="#" class="">2</a>
+            <a href="#" class="on">3</a>
+        </div>
+        <div class="main_image">
+            <ul style="width: 400px; overflow: visible;">
+                <li style="float: none; display: block; position: absolute; top: 0px; left: -800px; width: 400px;  height:auto;"><img
+                        src="./files/banner01.jpg" class="con_zone mb10"></li>
+                <li style="float: none; display: block; position: absolute; top: 0px; left: -400px; width: 400px; height:auto;"><img
+                        src="./files/banner02.jpg" class="con_zone mb10"></li>
+                <li style="float: none; display: block; position: absolute; top: 0px; left: 0px; width: 400px; height:auto;"><img
+                        src="./files/banner03.jpg" class="con_zone mb10"></li>
+            </ul>
+            <a id="btn_prev" style="width: 400px; overflow: visible;"></a>
+            <a id="btn_next" style="width: 400px; overflow: visible;"></a>
+        </div>
+    </div>
+    <div class="con_zone mb10" style="margin-top:1rem">
+        <img src="./files/fbanner.jpg" alt="">
+    </div>
+    <h3 class="apply_ti" style="padding-bottom:2%">贷款申请</h3>
+    <div class="apply_con mb10">
+        <div class="form" id="form">
+            <div class="li mui-input-group1" style="display:block;" id="thebeg">
+                <div class="item clearFix pingan">
+                    <div class="pdiv" style="width:58%;float:left;">
+                        <input type="text" name="name" id="name" placeholder="请填写您的真实姓名" class="item_txt fl"
+                               style="width:90%">
+                    </div>
+                    <div class="sexradio">
+                        <div class="sexc" onclick="chesex(this,1)" id="sex1" style="background-position:0 -1.4rem;">
+                            <span style="float:right;margin-right:-7%">先生</span></div>
+                        <div class="sexc" onclick="chesex(this,2)" id="sex2" style="margin-left:4.6%"><span
+                                style="float:right;margin-right:-7%">女士</span></div>
+                        <input type="hidden" name="sex" id="sex" value="1">
+                    </div>
+                </div>
+                <div class="item clearFix pingan">
+                    <div class="pdiv">
+                        <input type="tel" name="mobile" id="mobile" maxlength="11" placeholder="请填写您的真实手机号码"
+                               class="item_txt fl">
+                    </div>
+                </div>
+                <div class="item clearFix pingan">
+                    <div class="pdiv" style="position:relative">
+                        <input type="tel" name="loanmoney" id="loanmoney" maxlength="4" placeholder="请填写贷款金额"
+                               class="item_txt fl">
+                        <div class="absolutesss">万元</div>
+                    </div>
+                </div>
+                <div class="item clearFix pingan">
+                    <select name="sprovince" id="profile_location" class="select1"
+                            onchange="build_second(this.value,&#39;profile_sublocation&#39;,LOK);">
+                        <option value="0">请选择省</option>
+                        <option value="11">北京</option>
+                        <option value="12">天津</option>
+                        <option value="13">河北</option>
+                        <option value="14">山西</option>
+                        <option value="15">内蒙古</option>
+                        <option value="21">辽宁</option>
+                        <option value="22">吉林</option>
+                        <option value="23">黑龙江</option>
+                        <option value="31">上海</option>
+                        <option value="32">江苏</option>
+                        <option value="33">浙江</option>
+                        <option value="34">安徽</option>
+                        <option value="35">福建</option>
+                        <option value="36">江西</option>
+                        <option value="37">山东</option>
+                        <option value="41">河南</option>
+                        <option value="42">湖北</option>
+                        <option value="43">湖南</option>
+                        <option value="44">广东</option>
+                        <option value="45">广西</option>
+                        <option value="46">海南</option>
+                        <option value="50">重庆</option>
+                        <option value="51">四川</option>
+                        <option value="52">贵州</option>
+                        <option value="53">云南</option>
+                        <option value="54">西藏</option>
+                        <option value="61">陕西</option>
+                        <option value="62">甘肃</option>
+                        <option value="63">青海</option>
+                        <option value="64">宁夏</option>
+                        <option value="65">新疆</option>
+                        <option value="71">台湾</option>
+                        <option value="81">香港</option>
+                        <option value="82">澳门</option>
+                        <option value="99">外国</option>
+                    </select>
+                    <select name="scity" id="profile_sublocation" class="select2" style="margin-left:2.5%;">
+                        <option value="3100">请选择市</option>
+                        <option value="3101">上海</option>
+                    </select>
+                </div>
+                <input type="hidden" name="t" id="t" value="wx">
+                <input type="hidden" name="mid" id="mid" value="">
+                <input type="hidden" name="u" id="u" value="">
+                <div class="form_btn tac" style="margin-top:1rem">
+                    <span onclick="firstloan()" class="ljpd1" id="step1_next"
+                          style="width:96%;height:6rem;line-height: 6rem;font-size:2.4rem;background:#358eef">提交</span>
+                    <span class="ljpd2"
+                          style="width:96%;height:6rem;line-height: 6rem;font-size:2.4rem;background:#358eef;display:none;">提交中...</span>
+                </div>
+                <div class="insur mui-checkbox mui-left">
+                    <div class="check_left" id="btn_gou">
+                        <img src="./files/gou_l.png" style="display: block;">
+                        <input type="hidden">
+                        <input type="hidden" id="agereement_wap" value="1">
+                    </div>
+                    <p class="mui-card-content-inner">本人已阅读并同意
+                        <a id="btn_sec">《服务协议</a>》</p>
+                </div>
+            </div>
+
+            <div class="secur" style="display: none;">
+                <ul class="mui-content the_text">
+                    <li class="mui-card-content-inner">
+                        <h5>九洲融贷用户在线申请协议</h5>
+                        <header class="mui-bar mui-bar-nav header">
+                            <a id="header_i" class="mui-pull-left"></a>
+                        </header>
+                        <div class="summary_in">
+                            <p>请您使用九洲融贷服务前仔细阅读本协议。
+                                您只有完全同意所有协议，才能成为九洲融贷的用户并使用相应服务。您在注册为九洲融贷用户过程中点击“立即申请”、“立即注册”或“注册”按钮即表示您已仔细阅读并明确同意遵守本注册协议以及经参引而并入其中的所有条款、政策以及指南，并受该等规则的约束（合称"本注册协议"）。我们可能根据法律法规的要求或业务运营的需要，对本注册协议不时进行修改。除非另有规定，否则任何变更或修改将在修订内容于九洲融贷发布之时立即生效，您对九洲融贷的使用、继续使用将表明您接受此等变更或修改。如果您不同意本注册协议（包括我们可能不定时对其或其中引述的其他规则所进行的任何修改）的全部规定，否则请勿使用九洲融贷提供的所有服务，或您可以主动取消九洲融贷提供的服务。&nbsp;为了便于您了解适用于您使用九洲融贷的条款和条件，我们将在九洲融贷上发布我们对本协议的修改，您应不时地审阅本协议以及经参引而并入其中的其他规则。</p>
+                        </div>
+                        <div class="summary_in">
+                            <h6 class="media-heading">一、服务内容</h6>
+                            <p>1.1
+                                九洲融贷的具体服务内容由我们根据实际情况提供，包括但不限于信息、图片、文章、评论、积分抽奖活动等，我们将定期或不定期根据用户的意愿以电子邮件、短信、电话的方式为用户提供活动信息，并向用户提供学习、交流平台（以上统称“服务”）。我们对提供的服务拥有最终解释权。</p>
+                            <p>1.2 九洲融贷服务仅供个人用户使用。除我们书面同意，您或其他用户均不得将九洲融贷上的任何信息用于商业目的。</p>
+                            <p>
+                                1.3您使用九洲融贷服务时所需的相关的设备以及网络资源等（如个人电脑及其他与接入互联网或移动网有关的装置）及所需的费用（如为接入互联网而支付的电话费及上网费）均由您自行负担。</p>
+                        </div>
+                        <div class="summary_in">
+                            <h6 class="media-heading">二、信息提供和隐私保护</h6>
+                            <p>
+                                2.1 您在访问、使用九洲融贷或申请使用九洲融贷服务时，必须提供本人真实的个人信息，且您应该根据实际变动情况及时更新个人信息。最终及保护用户隐私是我们的重点原则，我们通过各种技术手段和强化内部管理等办法提供隐私保护服务功能，充分保护您的个人信息安全。</p>
+                            <p>
+                                2.2 九洲融贷不负责审核您提供的个人信息的真实性、准确性或完整性，因信息不真实、不准确或不完整而引起的任何问题及其后果，由您自行承担，且您应保证我们免受由此而产生的任何损害或责任。若我们发现您提供的个人信息是虚假、不准确或不完整的，我们有权自行决定终止向您提供服务。</p>
+                            <p>
+                                2.3 您已明确授权，为提供服务、履行协议、解决争议、保障交易安全等目的，我们对您提供的、我们自行收集的及通过第三方收集的您的个人信息、您申请服务时的相关信息、您在使用服务时储存在九洲融贷的非公开内容以及您的其他个人资料（以下简称“个人资料”）享有留存、整理加工、使用和披露的权利，具体方式包括但不限于：&nbsp;<br>
+                                （1）出于为您提供服务的需要在本网站公示您的个人资料；<br>
+                                （2）由人工或自动程序对您的个人资料进行获取、评估、整理、存储；<br>
+                                （3）使用您的个人资料以改进本网站的设计和推广；<br>
+                                （4）使用您提供的联系方式与您联络并向您传递有关服务和管理方面的信息；<br>
+                                （5）对您的个人资料进行分析整合，并向为您提供服务的金融机构提供为完成该项服务必要的信息。<br>
+                                （6）对于九洲融贷未设立物理营业网点的城市，您的个人资料将推荐至该城市第三方贷款服务公司，以便更好的解决您的实际问题，该种情况我们将以短信的形式告知您。<br>
+                                （7）在您违反与我们或我们的其他用户签订的协议时，披露您的个人资料及违约事实，将您的违约信息写入黑名单并与必要的第三方共享数据，以供我们及第三方审核、追索之用。<br>
+                                （8）其他必要的使用及披露您个人资料的情形。您已明确同意本条款不因您终止使用九洲融贷服务而失效。如因我们行使本条款项下权利使您遭受损失，我们对该等损失免责。
+                            </p>
+                            <p>
+                                2.4 为更好地为您提供服务，您同意并授权九洲融贷可与其合作的第三方进行联合研究，并可将通过本协议获得的您的信息投入到该等联合研究中。但九洲融贷与其合作的第三方在开展上述联合研究前，应要求其合作的第三方对在联合研究中所获取的您的信息予以保密。</p>
+                            <p>2.5 我们不会向与您无关的第三方恶意泄露或免费提供您的个人资料，但下列情况除外：&nbsp;<br>
+                                （1）事先获得您的明确授权；<br>
+                                （2）按照相关司法机构或政府主管部门的要求；<br>
+                                （3）客户自行向除九洲融贷以外的机构公开其个人隐私信息；<br>
+                                （4）不可抗力：任何由于黑客攻击、电脑病毒侵入、自然灾害等其他不可抗力事件导致用户个人隐私信息的泄露。<br>
+                                （5）以维护我们合法权益之目的；&nbsp;<br>
+                                （6）维护社会公众利益；&nbsp;<br>
+                                （7）为了确保九洲融贷业务和系统的完整与操作。<br>
+                                （8）符合其他合法要求。
+                            </p>
+                        </div>
+                        <div class="summary_in">
+                            <h6 class="media-heading">三、使用准则</h6>
+                            <p>3.1 您在使用九洲融贷服务过程中，必须遵循国家的相关法律法规，不通过九洲融贷发布、复制、上传、散播、分发、存储、创建或以其它方式公开含有以下内容的信息：<br>
+                                （1）反对宪法所确定的基本原则的；<br>
+                                （2）危害国家安全，泄露国家秘密，颠覆国家政权，破坏国家统一的；<br>
+                                （3）损害国家荣誉和利益的；&nbsp;<br>
+                                （4）煽动民族仇恨、民族歧视，破坏民族团结的；<br>
+                                （5）破坏国家宗教政策，宣扬邪教和封建迷信的；<br>
+                                （6）散布谣言，扰乱社会秩序，破坏社会稳定的；<br>
+                                （7）散布淫秽、色情、赌博、暴力、凶杀、恐怖或者教唆犯罪的、欺诈性的或以其它令人反感的讯息、数据、信息、文本、音乐、声音、照片、图形、代码或其它材料；&nbsp;<br>
+                                （8）侮辱或者诽谤他人，侵害他人合法权益的；&nbsp;<br>
+                                （9）其他违反宪法和法律、行政法规或规章制度的；&nbsp;<br>
+                                （10）可能侵犯他人的专利、商标、商业秘密、版权或其它知识产权或专有权利的内容；<br>
+                                （11）假冒任何人或实体或以其它方式歪曲您与任何人或实体之关联性的内容；<br>
+                                （12）未经请求而擅自提供的促销信息、政治活动、广告或意见征集；&nbsp;<br>
+                                （13）任何第三方的私人信息，包括但不限于地址、电话号码、电子邮件地址、身份证号以及信用卡卡号；<br>
+                                （14）病毒、不可靠数据或其它有害的、破坏性的或危害性的文件；<br>
+                                （15）与内容所在的互动区域的话题不相关的内容；&nbsp;<br>
+                                （16）依我们的自行判断，足以令人反感的内容，或者限制或妨碍他人使用或享受互动区域或九洲融贷的内容，或者可能使我们或我们关联方或其他用户遭致任何类型损害或责任的内容；&nbsp;<br>
+                                （17）包含法律或行政法规禁止内容的其他内容。</p>
+                            <p>3.2 用户不得利用九洲融贷的服务从事下列危害互联网信息网络安全的活动：<br>
+                                （1）未经允许，进入计算机信息网络或者使用计算机信息网络资源；&nbsp;
+                                （2）未经允许，对计算机信息网络功能进行删除、修改或者增加；<br>
+                                （3）未经允许，对进入计算机信息网络中存储、处理或者传输的数据和应用程序进行删除、修改或者增加；<br>
+                                （4）故意制作、传播计算机病毒等破坏性程序；&nbsp;<br>
+                                （5）其他危害计算机信息网络安全的行为。
+                            </p>
+                            <p>
+                                3.3 我们保留在任何时候为任何理由而不经通知地过滤、移除、筛查或编辑本网站上发布或存储的任何内容的权利，您须自行负责备份和替换在本网站发布或存储的任何内容，成本和费用自理。</p>
+                            <p>3.4 您须对自己在使用九洲融贷服务过程中的行为承担法律责任。若您为限制行为能力或无行为能力者，则您的法定监护人应承担相应的法律责任。</p>
+                            <p>3.5 如您的操作影响系统总体稳定性或完整性，我们将暂停或终止您的操作，直到相关问题得到解决。</p>
+                        </div>
+                        <div class="summary_in">
+                            <h6 class="media-heading">四、免责声明</h6>
+                            <p>
+                                4.1 九洲融贷是一个开放平台，用户将文章或照片等个人资料上传到互联网上，有可能会被其他组织或个人复制、转载、擅改或做其它非法用途，用户必须充分意识此类风险的存在。作为网络服务的提供者，我们对用户在任何论坛、个人主页或其它互动区域提供的任何陈述、声明或内容均不承担责任。您明确同意使用九洲融贷服务所存在的风险或产生的一切后果将完全由您自身承担，我们对上述风险或后果不承担任何责任。</p>
+                            <p>
+                                4.2 您违反本注册协议、违反道德或法律的，侵犯他人权利（包括但不限于知识产权）的，我们不承担任何责任。同时，我们对任何第三方通过九洲融贷发送服务或包含在服务中的任何内容不承担责任。</p>
+                            <p>4.3 对您、其他用户或任何第三方发布、存储或上传的任何内容或由该等内容导致的任何损失或损害，我们不承担责任。</p>
+                            <p>4.4 对任何第三方通过九洲融贷可能对您造成的任何错误、中伤、诽谤、诬蔑、不作为、谬误、淫秽、色情或亵渎，我们不承担责任</p>
+                            <p>
+                                4.5 对黑客行为、计算机病毒、或因您保管疏忽致使帐号、密码被他人非法使用、盗用、篡改的或丢失，或由于与本网站链接的其它网站所造成您个人资料的泄露，我们不承担责任。如您发现任何非法使用用户帐号或安全漏洞的情况，请立即与我们联系。</p>
+                            <p>4.6 因任何非九洲融贷原因造成的网络服务中断或其他缺陷，我们不承担任何责任。</p>
+                            <p>4.7 我们不保证服务一定能满足您的要求；不保证服务不会中断，也不保证服务的及时性、安全性、准确性。</p>
+                            <p>
+                                4.8 任何情况下，因使用九洲融贷而引起或与使用九洲融贷有关的而产生的由我们负担的责任总额，无论是基于合同、保证、侵权、产品责任、严格责任或其它理论，均不得超过您因访问或使用本网站而向九洲融贷支付的任何报酬（如果有的话）。</p>
+                            <p>4.9 九洲融贷提供免费的贷款搜索和推荐服务，贷款过程中遇到的任何预先收费均为诈骗行为，请保持警惕避免损失。</p>
+                            <p>4.10 您充分理解并完全接受：九洲融贷有权将用户信息提供给广州小微集团旗下的关联公司“东莞助贷信息技术有限公司”以及业务合作方使用，包括不仅限于“湖南优财信息技术有限公司”、“
+                                恒诚科技发展（北京）有限公司”
+                                、“平安普惠”、“南京芮志坤远信息科技有限公司”、“佛山助企互联网信息科技有限公司”等，如客户有保险测算意向并于流程留下相关信息，视为本人授权将本人相关信息转给“招商信诺人寿保险有限公司”、“友邦保险有限公司”、“平安人寿”、“太平人寿”、“阳光保险”、“中英人寿”、“泰康人寿”、“中美大都会”等保险公司（以上保险公司为简写）以提供后续保险服务。</p>
+                        </div>
+                        <div class="summary_in">
+                            <h6 class="media-heading">五、服务变更、中断或终止</h6>
+                            <p>5.1 如因升级的需要而需暂停网络服务、或调整服务内容，我们将尽可能在网站上进行通告。由于用户未能及时浏览通告而造成的损失，我们不承担任何责任。</p>
+                            <p>
+                                5.2 您明确同意，我们保留根据实际情况随时调整九洲融贷提供的服务内容、种类和形式，或自行决定授权第三方向您提供原本我们提供的服务。因业务调整给您或其他用户造成的损失，我们不承担任何责任。同时，我们保留随时变更、中断或终止九洲融贷全部或部分服务的权利。</p>
+                            <p>5.3 发生下列任何一种情形，我们有权单方面中断或终止向您提供服务而无需通知您，且无需对您或第三方承担任何责任： （1）您提供的个人资料不真实； （2）您违反本服务条款；
+                                （3）未经我们书面同意，将九洲融贷平台用于商业目的。</p>
+                            <p>5.4 您可随时通知我们终止向您提供服务或直接取消九洲融贷服务。自您终止或取消服务之日起，我们不再向您承担任何形式的责任。</p>
+                        </div>
+                        <div class="summary_in">
+                            <h6 class="media-heading">六、知识产权及其它权利</h6>
+                            <p>
+                                6.1 用户可以充分利用九洲融贷平台共享信息。您可以在九洲融贷发布从九洲融贷个人主页或其他网站复制的图片和信息等内容，但这些内容必须属于公共领域或者您拥有以上述使用方式使用该等内容的权利，且您有权对该等内容作出本条款下之授权、同意、认可或承诺。</p>
+                            <p>6.2 对您在九洲融贷发布或以其它方式传播的内容，您作如下声明和保证：<br>
+                                （1）对于该等内容，您具有所有权或使用权；<br>
+                                （2）该等内容是合法的、真实的、准确的、非误导性的； <br>
+                                （3）使用和发布此等内容或以其它方式传播此等内容不违反本服务条款，也不侵犯任何人或实体的任何权利或造成对任何人或实体的伤害。
+                            </p>
+                            <p>
+                                6.3 未经相关内容权利人的事先书面同意，您不得擅自复制、传播在九洲融贷的该等内容，或将其用于任何商业目的，所有这些资料或资料的任何部分仅可作为个人或非商业用途而保存在某台计算机内。否则，我们及/或权利人将追究您的法律责任。</p>
+                            <p>6.4 您在九洲融贷发布或传播的自有内容或具有使用权的内容，您特此同意如下： <br>
+                                （1）授予我们使用、复制、修改、改编、翻译、传播、发表此等内容，从此等内容创建派生作品，以及在全世界范围内通过任何媒介（现在已知的或今后发明的）公开展示和表演此等内容的权利；
+                                <br>
+                                （2）授予九洲融贷及其关联方和再许可人一项权利，可依他们的选择而使用用户有关此等内容而提交的名称； <br>
+                                （3）授予我们在第三方侵犯您在九洲融贷的权益、或您发布在九洲融贷的内容情况下，依法追究其责任的权利（但这并非我们的义务）；
+                            </p>
+                            <p>
+                                6.5 您在九洲融贷公开发布或传播的内容、图片等为非保密信息，我们没有义务将此等信息作为您的保密信息对待。在不限制前述规定的前提下，我们保留以适当的方式使用内容的权利，包括但不限于删除、编辑、更改、不予采纳或拒绝发布。我们无义务就您提交的内容而向您付款。一旦内容已在九洲融贷发布，我们也不保证向您提供对在九洲融贷发布内容进行编辑、删除或作其它修改的机会。</p>
+                            <p>
+                                6.6 如有权利人发现您在九洲融贷发表的内容侵犯其权利，并依相关法律、行政法规的规定向我们发出书面通知的，九洲融贷有权在不事先通知您的情况下自行移除相关内容，并依法保留相关数据。您同意不因该种移除行为向我们主张任何赔偿，如我们因此遭受任何损失，您应向赔偿我们的损失（包括但不限于赔偿各种费用及律师费）。</p>
+                            <p>
+                                6.7 若您认为您发布第6.6条指向内容并未侵犯其他方的权利，您可以向我们以书面方式说明被移除内容不侵犯其他方权利的书面通知，该书面通知应包含如下内容：您详细的身份证明、住址、联系方式、您认为被移除内容不侵犯其他方权利的证明、被移除内容在九洲融贷上的位置以及书面通知内容的真实性声明。我们收到该书面通知后，有权决定是否恢复被移除内容。</p>
+                            <p>6.8 您特此同意，如果6.7条中的书面通知的陈述失实，您将承担由此造成的全部法律责任，如我们因此遭受任何损失，您应向赔偿我们的损失（包括但不限于赔偿各种费用及律师费）。</p>
+                        </div>
+                        <div class="summary_in">
+                            <h6 class="media-heading">七、特别约定</h6>
+                            <p>7.1 您使用本服务的行为若有任何违反国家法律法规或侵犯任何第三方的合法权益的情形时，我们有权直接删除该等违反规定之信息，并可以暂停或终止向您提供服务。</p>
+                            <p>7.2 若您利用九洲融贷服务从事任何违法或侵权行为，由您自行承担全部责任，因此给我们或任何第三方造成任何损失，您应负责全额赔偿，并使我们免受由此产生的任何损害。</p>
+                            <p>7.3 您同意我们通过重要页面的公告、通告、电子邮件以及常规信件的形式向您传送与九洲融贷服务有关的任何通知和通告。</p>
+                            <p>7.4 如您有任何有关与九洲融贷服务的个人信息保护相关投诉，请您与我们联系，我们将在接到投诉之日起15日内进行答复。</p>
+                            <p>7.5 本服务条款之效力、解释、执行均适用中华人民共和国法律。</p>
+                            <p>7.6 如就本协议内容或其执行发生任何争议，应尽量友好协商解决；协商不成时，任何一方均可向九洲融贷所在地的人民法院提起诉讼</p>
+                            <p>7.7 本服务条款中的标题仅为方便而设，不影响对于条款本身的解释。本服务条款最终解释权归东莞助贷投资咨询有限公司所有。</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="li mui-input-group2" id="thebeg2" style="display: none;">
+                <div class="item clearFix pingan reli">
+                    <label>1.选择生日 <span>*</span></label>
+                    <div class="pdiv">
+                        <input value="" class="item_txt fl" readonly="" name="birthday" id="birthday" type="text"
+                               placeholder="请选择出生日期">
+                    </div>
+                </div>
+                <div class="item clearFix pingan btn_three">
+                    <label>2.是否有房 <span>*</span></label>
+                    <div class="pdiv" id="house_side">
+                        <button type="button" class="btn btn-default" value="购房按揭中">月供房</button>
+                        <button type="button" class="btn btn-default" value="全款红本在手">买断房</button>
+                        <button type="button" class="btn btn-default" value="无">无</button>
+                        <input type="hidden" name="house" id="house" value="请选择">
+                    </div>
+                </div>
+                <div class="item clearFix pingan btn_three">
+                    <label>3.是否有车 <span>*</span></label>
+                    <div class="pdiv" id="car_side">
+                        <button type="button" class="btn btn-default" value="按揭车">月供车</button>
+                        <button type="button" class="btn btn-default" value="全款车">买断车</button>
+                        <button type="button" class="btn btn-default" value="无">无</button>
+                        <input type="hidden" name="car" id="car" value="请选择">
+                    </div>
+                </div>
+                <div class="item clearFix pingan btn_four">
+                    <label>4.是否有公积金 <span>*</span></label>
+                    <div class="pdiv" id="shebao_side">
+                        <button type="button" class="btn btn-default" value="有">有</button>
+                        <button type="button" class="btn btn-default" value="无">无</button>
+                        <input type="hidden" name="gongjijin" id="gongjijin" value="请选择">
+                    </div>
+                </div>
+                <div class="item clearFix pingan btn_four">
+                    <label>5.是否有保单 <span>*</span></label>
+                    <div class="pdiv" id="policy_side">
+                        <button type="button" class="btn btn-default" value="有">有</button>
+                        <button type="button" class="btn btn-default" value="无">无</button>
+                        <input type="hidden" name="baodan_is" id="baodan_is" value="请选择">
+                    </div>
+                </div>
+                <div class="item clearFix pingan btn_four">
+                    <label>6.是否有信用卡 <span>*</span></label>
+                    <div class="pdiv" id="credit_side">
+                        <button type="button" class="btn btn-default" value="有">有</button>
+                        <button type="button" class="btn btn-default" value="无">无</button>
+                        <input type="hidden" name="credit_card" id="credit_card" value="请选择">
+                    </div>
+                </div>
+                <div class="item clearFix pingan btn_four">
+                    <label>7.是否有社保 <span>*</span></label>
+                    <div class="pdiv" id="social_side">
+                        <button type="button" class="btn btn-default" value="有">有</button>
+                        <button type="button" class="btn btn-default" value="无">无</button>
+                        <input type="hidden" name="work_shebao" id="work_shebao" value="请选择">
+                    </div>
+                </div>
+                <div class="item clearFix pingan btn_four undertake">
+                    <label>8.是否银行代发工资 <span>*</span></label>
+                    <div class="pdiv" id="undertake_side">
+                        <button type="button" class="btn btn-default" value="银行代发">是</button>
+                        <button type="button" class="btn btn-default" value="">否</button>
+                        <input type="hidden" name="work_wage_give_type" id="work_wage_give_type" value="请选择">
+                    </div>
+                </div>
+                <div class="item clearFix pingan btn_three">
+                    <label>9.微粒贷额度 <span></span></label>
+                    <select class="pdiv" id="particles_side" style="border:#dddddd 1px solid">
+                        <option value="">请选择</option>
+                        <option value="0">没有微粒贷</option>
+                        <option value="1">5000</option>
+                        <option value="2">10000</option>
+                        <option value="3">20000</option>
+                        <option value="4">30000</option>
+                        <option value="5">50000</option>
+                        <option value="6">50000以上</option>
+                    </select>
+                    <input type="hidden" value="" id="weili">
+                </div>
+                <div id="sesame_side">
+                    <div class="item clearFix pingan btn_four">
+                        <label>10.芝麻信用分 <span></span></label>
+                        <div class="pdiv">
+                            <button type="button" class="btn btn-default" value="1">350~550</button>
+                            <button type="button" class="btn btn-default" value="2">550~650</button>
+                        </div>
+                    </div>
+                    <div class="item clearFix pingan btn_four">
+                        <label></label>
+                        <div class="pdiv">
+                            <button type="button" class="btn btn-default" value="3">650以上</button>
+                            <button type="button" class="btn btn-default" value="4">其他</button>
+                            <input type="hidden" name="zhima" id="zhima" value="请选择">
+                        </div>
+                    </div>
+                </div>
+                <div class="form_btn tac" style="margin-top:1rem">
+                    <input type="hidden" id="id" name="id">
+                    <span onclick="secondloan()" id="step1_next2"
+                          style="width:96%;height:6rem;line-height: 6rem;font-size:2.4rem;background:#358eef">完成申请</span>
+                </div>
+
+                <style>
+                    /*security安全保障开始*/
+                    .security_text {
+                        min-width: 320px;
+                        max-width: 640px;
+                        position: fixed;
+                        width: 100%;
+                        height: 100%;
+                        z-index: 999;
+                        left: 0;
+                        top: 0;
+                        display: none;
+                    }
+
+                    .security_text header .mui-pull-left {
+                        float: left;
+                        position: absolute;
+                        top: 4px;
+                        right: 20px;
+                    }
+
+                    .security_text .the_text h5 {
+                        text-align: center;
+                        color: #333333;
+                        font-size: 16px;
+                        font-weight: bold;
+                    }
+
+                    .security_text .header {
+                        background: none;
+                        box-shadow: none;
+                    }
+
+                    .security_text .header h1 {
+                        font-size: 16px;
+                        color: #333333;
+                        font-weight: 700;
+                    }
+
+                    .security_text .the_text .mui-pull-left {
+                        position: fixed;
+                        top: 0px;
+                        right: 10px;
+                        margin: 10px 5px;
+                        width: 30px;
+                        height: 30px;
+                        background: url(./files/icon_x.png) no-repeat;
+                        background-size: 100%;
+                    }
+
+                    .security_text .the_text {
+                        width: 100%;
+                        height: 100%;
+                        overflow: auto;
+                    }
+
+                    .security_text .the_text .mui-card-content-inner {
+                        background-color: white;
+                        padding: 16px 15px 26px 15px;
+                    }
+
+                    .security_text .the_text .mui-card-content-inner h6 {
+                        line-height: 20px;
+                        font-weight: bold;
+                        color: #333333;
+                        font-size: 14px;
+                    }
+
+                    .security_text .mui-card-content-inner .summary_in {
+                        margin-top: 15px;
+                    }
+
+                    .security_text .mui-card-content-inner .summary_in p {
+                        line-height: 20px;
+                        margin-bottom: 0;
+                        font-size: 14px;
+                        color: #666666;
+                    }
+
+                    /*security安全保障结束*/
+                </style>
+                <div class="security_text" id="zengxian_text" style="display: none;">
+                    <ul class="mui-content the_text">
+                        <li class="mui-card-content-inner" style="display: inherit;">
+                            <h5>安全保障</h5>
+                            <a id="header_i02" class="mui-pull-left"></a>
+                            <div class="summary_in">
+                                <h6>活动规则</h6>
+                                <p>为维护您自身权益，建议您仔细阅读各条款具体表述。</p>
+                                <p>【审慎阅读】您在申请注册流程中同意本协议之前，应当认真阅读本协议。请您务必审慎阅读、充分理解各条款内容。</p>
+                                <p>
+                                    当您在本公司的推广页面中自主填写了您的个人需求及信息后，即视为您同意本公司将您的信息提供与本公司合作的保险产品方，我们将根据您的财务需要向您推送符合您需求的寿险产品，并安排寿险产品专业服务人员为您提供专业咨询类服务，如果您不同意本协议或其中任何条款约定，您应立即停止注册程序。</p>
+                                <p>为了向您提供更优质的客户服务和产品，本公司将通过本网站收集您的部分信息。为了使您提供的所有信息都能得到机密保障，本公司采用下述关于信息保护的政策：</p>
+                                <p>1.投保对象：本保险身故受益人为法定受益人。本保险的保险对象为0-90周岁身体健康、能正常工作或正常生活的自然人。</p>
+                                <p>
+                                    2.保险期限：以被保险人收到短信通知上的保险起止日期为准。对保险日期之外所发生的保障事故保险公司不负责给付保险责任；平安保险为1年之中的法定节假日，具体假日安排以当年全国假日旅游协调办公室公布为准</p>
+                                <p>3.使用条款：详情内容请登录保险公司官网网站查询。</p>
+                                <p>4.告知义务：依我国《保险法》的规定，投保人、被保险人应如实告知，否则保险人有权依法解除保险合同，并对于保险合同解除前发生的保险事故不负任何责任。
+                                    投保人、被保险人在投保时，应对投保书内各项内容如实详细的说明或填写清楚。否则，保险人有权依法解除保险合同。</p>
+                                <p>5.保险判定流程：根据用户所填写的资料后台自动匹配最适合用户的保险为期进行投保,具体产品情况以申请时的政策为准。</p>
+                                <p>
+                                    6.保险提供商：相关保险由泰康人寿（保险名称：铁定保；保障内容：火车；保障时长：1年；最高保额：50万元；适用年龄：25-50周岁）、中国平安（保险名称：平安假日出行险；保险责任描述：交通意外伤害(民航客机)保障额度：98万/交通意外伤害（列车、轮船）保障额度：1万/交通意外伤害（汽车）保障额度：1万;保障期限：为1年之中的法定节假日，具体假日安排以当年全国假日旅游协调办公室公布为准;投保年龄：0-90岁）太平人寿（保险名称：太平无忧航空意外伤害险；保障内容：飞机；保障时长：90天；最高保额：8万元；适用年龄：22-48周岁）、招商信诺人寿（保险名称：行路宝；保障内容：公共交通意外；保障时长：90天；最高保额：5万元；适用年龄：25-45周岁）。招商信诺人寿客服（通过400-880-3633专线）致电沟通赠险领取事宜；中英人寿（保险名称：交通意外伤害保险C款；保障内容：飞机/轨道交通/汽车/非营运汽车；保障时长：90天；最高保额：20万元；适用年龄：25-48周岁）提供，参与本活动即表示本人已知晓并许可太平人寿（通过95589专线）、泰康人寿客服（通过95522专线）、中英人寿客服（通过950951专线）或中国平安客服(通过95511专线)、阳光人寿客服(通过95510专线)、华夏人寿客服(通过95300专线)致电沟通赠险领取事宜。</p>
+                                <p>7.保险凭证：险公司对保险仅提供电子保单；赠送保险每人只能投保一份，重复或投保多分无效。</p>
+                                <p>
+                                    8.如对赠险内容及理赔有疑问请拨打相关保险公司客服电话〔致电客服热线泰康人寿【95522】、中国平安【95511】、太平人寿【95589】、中英人寿【950951】、阳光人寿【95510】、华夏人寿【95300】致电招商信诺人寿【95362】进行咨询〕进行咨询重要告知与声明。</p>
+                                <p>9. 根据监管新规，投保人、被保人是外国政要或国际组织高级管理人员不得承保免费保险。</p>
+                                <p>
+                                    本人授权保险公司，除法律另有规定之外，将本人提供给保险公司的信息、享受保险公司服务产生的信息（包括本〔单证〕签署之前提供和产生的信息）以及保险公司根据本条约定查询、收集的信息，用于保险公司及其因服务必要委托的合作伙伴为本人提供服务、推荐产品、开展市场调查与信息数据分析。</p>
+                                <p>
+                                    本人授权保险公司，除法律另有规定之外，基于为本人提供更优质服务和产品的目的，向保险公司因服务必要开展合作的伙伴提供、查询、收集本人的信息。为确保本人信息的安全，保险公司及其合作伙伴对上述信息负有保密义务，并采取各种措施保证信息安全。</p>
+                                <p>本条款自本〔单证〕签署时生效，具有独立法律效力 , 不受合同成立与否及效力状态变化的影响。</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="con_zone mb10" style="background:#35abef;width:100%" id="change_city">
+        <a href="tel:15000905659"><img src="./files/index_footer_bar_shanghai.jpg"
+                                        style="margin:0.5rem 3%;width:94%;" alt=""></a>
+    </div>
+    <div class="footer-area" style="margin-bottom:0">
+        <ul class="about_share">
+            <li class="about">
+                <input type="hidden" name="zdtype" id="zdtype" value="">
+                <a href="javascript:void(0)" style="color:#fff">关于九洲融贷</a>
+            </li>
+        </ul>
+        <p style="color:#fff">Copyright © 2018 WWW.JZRD.COM.CN All Rights Reserved.</p>
+        <p>
+            <a href="http://www.jzrd.com.cn/"
+               style="color: white;">沪ICP备13004288号-1</a>
+        </p>
+        <p style="color:#fff">九洲融贷投资咨询有限公司</p>
+
+    </div>
+    <script type="text/javascript">
+        //省份选择函数
+        function build_second(first_value, second_id, second_array) {
+            document.getElementById(second_id).innerHTML = '';
+            var k = 1000;
+            for (key in second_array[first_value]) {
+                var sOption = document.createElement("OPTION");
+                sOption.text = second_array[first_value][key];
+                sOption.value = key;
+                document.getElementById(second_id).options.add(sOption, k);
+            }
+            k--;
+        }
+
+        //定义一个函数
+        function fn(rname) {
+            var radio1 = document.getElementsByName(rname);
+            var flag1 = 0;
+            for (var i = 0; i < radio1.length; i++) {
+                if (radio1.item(i).checked == true) {
+                    flag1 = 1;
+                    break;
+                }
+            }
+            return flag1;
+        }
+
+        $(document).ready(function () {
+            var obj = $("#profile_sublocation");
+            if (obj != undefined) {
+                $("#profile_sublocation").change(function () {
+                    var img_city = $('#profile_sublocation').val()
+                    if (img_city == 3101) {
+                        $('#change_city').html('<a href="tel:15000905659"><img src="./files/index_footer_bar_shanghai.jpg" style="margin:0.5rem 3%;width:94%;" alt=""></a>');
+                    } else {
+                        $('#change_city').html('<a href="tel:15000905659"><img src="./files/index_footer_bar_400.jpg" style="margin:0.5rem 3%;width:94%;" alt=""></a>');
+                    }
+                });
+            }
+        });
+    </script>
+</div>
+<script type="text/javascript" src="./files/getcity_jsonp.js"></script>
+
+
+</body>
+</html>

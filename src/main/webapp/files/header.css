@@ -1,0 +1,86 @@
+@charset "utf-8";
+/* CSS Document */
+/*-------------全局样式--------*/
+div, h1, h2, h3, h4, h5, h6, ul, li, dl, dt, dd, img, p, body ,blockquote{ margin: 0px; padding: 0px; }
+img { border:0px; }
+ul, li, dl, dt, dd { list-style-type: none; }
+body { font-family: "microsoft yahei",arial; }
+.clear { clear:both; height:0; font-size: 0px; line-height: 0px; }
+.clearFix:after { clear:both; display:block; visibility:hidden; height:0; line-height:0; content:''; }
+.clearFix { zoom:1; }
+a{text-decoration:none; color:#dda9ac;}
+.container{ min-width:320px; max-width:640px; margin:0 auto; background:#fff; position:relative; font-size:1.4rem;}
+.container img{width:100%; height:auto; /*display:block; margin:0 auto; */vertical-align:top;}
+html{font-size:62.5%;}
+.con_zone{width:96%; height:100%; margin:0 auto; font-size:1.4rem; line-height:1.6em; color:#000;}
+body{font-size:1.4rem; line-height:1.6em;}
+.fl{float:left ;}
+.fr{float:right;}
+.tal{text-align:left;}
+.tac{text-align:center;}
+.tar{text-align:right;}
+.fz12{font-size:1.2rem }
+.fz14{font-size:1.4rem }
+.fz16{font-size:1.6rem }
+.fz18{font-size:1.8rem;}
+.ti{text-indent:2em;}
+.c-white{color:#fff;}
+.c-blue{color:#5ca8ee;}
+.mb10{margin-bottom:2rem;}
+.w05em{width:0.5em; display:inline-block;}
+.w1em{width:1em; display:inline-block;}
+.w2em{width:2em; display:inline-block;}
+.w3em{width:3em; display:inline-block;}
+@media screen and (max-width:460px) and (min-width:320px){
+	.mb10{margin-bottom:1rem;}
+}
+/*----------头部--开始------*/
+.header-area{background:#b8202f; border-bottom:1rem solid #e8e5e6;}
+.header-zone{width:85%; margin:0 auto; position:relative;}
+@media screen and (max-width:460px) and (min-width:320px){
+	.header-area{border-bottom:0.5rem solid #e8e5e6;}
+}
+/*----------尾部--开始------*/
+.footer-area{background:#b8202f; text-align:center; padding:5% 0; margin-bottom:12%;}
+.about_share{margin-bottom:0.5rem;}
+.about_share li{display:inline-block; font-size:2.4rem; color:#dda9ac; cursor:pointer; padding:0 1em;}
+.about_share li.about{border-right:0px solid #dda9ac;}
+.about_share li.about a{color:#dda9ac;}
+.footer-area p{color:#c7646c; line-height:1.4em; font-size:1.6rem;}
+@media screen and (max-width:460px) and (min-width:320px){
+	.about_share li{font-size:1.6rem; }
+	.footer-area p{font-size:1.2rem;}
+}
+.footer-bar{width:100%; max-width:640px; box-sizing:border-box; background:#63aff3; position:fixed; bottom:0; z-index:888;
+	background: -webkit-gradient(linear, 0 0, 0 100%, from(#6ab5f8), to(#58a5eb)); /** Chrome Safari **/ 
+	background: -moz-linear-gradient(top, #6ab5f8, #58a5eb); /** FireFox **/
+	background: -o-linear-gradient(top, #6ab5f8, #58a5eb);  /** Opear **/ 
+	background: -ms-linear-gradient(#6ab5f8 0%,#58a5eb 100%);  /** IE9 IE10 **/
+}
+.footer-bar img{display:block; width:70%; height:auto; margin:0 auto;}
+.footer_share_wrap{position:fixed; width:640px; height:100em; bottom:0;  background:url(https://staticcdn.zhudai.com/default/d/wap/sem/images/share_bg.png); z-index:999; display:none;}
+.footer_share_con{position:fixed; bottom:0; background:#fff; width:100%; padding:4% 0; z-index:999; max-width:640px; overflow:hidden;}
+.footer_share_icon{padding-left:14%; width:100%; box-sizing:border-box;}
+.footer_share_icon li{width:15.5%; text-align:center; font-size:1.6rem; float:left; margin-right:7.4%; margin-bottom:2%;}
+.footer_share_icon li a{color:#3b3b3b;}
+.footer_share_icon li p{padding:0.5em 0;}
+.footer_share_cancel{border:1px solid #bfbfbf; font-size:2.4rem; color:#3b3b3b; border-radius:0.4em; padding:0.4em 0; line-height:1.4em; text-align:center; width:72%; margin:0 auto;}
+@media screen and (max-width:490px) and (min-width:460px){
+	.footer_share_icon li{font-size:1.4rem;}	
+}
+@media screen and (max-width:460px) and (min-width:320px){
+	.footer_share_con{padding:6% 0;}
+	.footer_share_icon{padding-left:11%;}
+	.footer_share_icon li{width:18%; margin-right:5.6%;}
+	.footer_share_icon li{font-size:1.2rem;}
+	.footer_share_cancel{width:79%;}	
+	.footer_share_cancel{font-size:1.4rem;}
+}
+
+
+
+
+
+
+
+

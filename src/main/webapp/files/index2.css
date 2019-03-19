@@ -1,0 +1,168 @@
+@charset "utf-8";
+/* CSS Document */
+input[type="button"], input[type="submit"], input[type="reset"] {-webkit-appearance: none;}
+/*-------融资在线申请（30秒快速完成）------------*/
+.apply_ti{background:#b8202f; padding:3% 3%; border-top:1rem solid #e8e5e6; border-bottom:1rem solid #e8e5e6; color:#fff; font-size:2.4rem; font-weight:normal; line-height:1.4em;}
+.apply_ti strong{font-weight:bold;}
+@media screen and (max-width:460px) and (min-width:320px){
+	.apply_ti{border-top:0.5rem solid #e8e5e6;border-bottom:0.5rem solid #e8e5e6; font-size:1.6rem;}
+}
+/*.apply_con_ul .apply_con_li{display:none;}
+.apply_con_ul .li_on{display:block;}*/
+/*.form{display:none;}*/
+/*.form{padding-bottom:5%;}*/
+.form .li{display:none;}
+.item{border-bottom:1px solid #d2d2d2; padding:2% 6%; }
+.item_name{width:28%; font-size:2rem; line-height:3.36rem; color:#2c2c2c;}
+.item_name .need{padding-left:1em; background:url(https://staticcdn.zhudai.com/default/d/wap/semindex_start_03.gif) no-repeat left center;}
+.item_txt,.select{width:68%; outline:none;  border:none; margin:0; box-shadow:none; font-size:1.6rem; font-family: "microsoft yahei",arial;/* line-height:3.4rem;*/ height:3.4rem;line-height: 2rem;padding: 0.7rem 0; }
+.item .label{padding-top:0.4em; margin-right:1.6rem;}
+@media screen and (max-width:500px) and (min-width:460px){
+	.item_name{font-size:1.6rem; }
+}
+@media screen and (max-width:460px) and (min-width:320px){
+	.item_name{font-size:1.4rem; width:31%;}
+	.item_txt,.select{font-size:1.2rem; width:68%;}
+	.item .label{padding-top:0.7em;}
+}
+.sex_choice{padding:4% 0; text-align:center;}
+.sex_choice li{display:inline-block; font-size:2.4rem; width:34%; line-height:1.4em; border:1px solid #dfdfdf; border-radius:0.1em; overflow:hidden; cursor:pointer;}
+.sex_choice li.man{margin-right:5%;}
+.sex_choice li span{padding:0.5em 0; padding-left:2em; display:inline-block; background:url(https://staticcdn.zhudai.com/default/d/wap/semindex_sex.gif) no-repeat left 0.45em; background-size:1.6em auto; display:inline-block; color:#dfdfdf;}
+.sex_choice li.woman span{background:url(https://staticcdn.zhudai.com/default/d/wap/semindex_sex.gif) no-repeat left -4.2em; background-size:1.6em auto;}
+@media screen and (max-width:460px) and (min-width:320px){
+	.sex_choice li{font-size:1.6rem;}
+	.sex_choice li span{padding:0.4em 0; padding-left:2em; background:url(https://staticcdn.zhudai.com/default/d/wap/semindex_sex.gif) no-repeat left 0.35em; background-size:1.6em auto;}
+	.sex_choice li.woman span{background:url(https://staticcdn.zhudai.com/default/d/wap/semindex_sex.gif) no-repeat left -4.2em; background-size:1.6em auto;}
+}
+.sex_choice li.on{border:1px solid #b8202f;}
+.sex_choice li.on span{background-image:url(https://staticcdn.zhudai.com/default/d/wap/semindex_sex_on.gif); color:#b8202f;}
+.form_btn span{width:73%; display:inline-block; background:#b8202f; border-radius:0.1em; font-size:2.4rem; font-size:1.6rem; line-height:2.4em; color:#fff;}
+.form_btn span .btn{outline:none;  border:none; padding:0; margin:0; box-shadow:none; font-size:2.4rem; font-family: "microsoft yahei",arial;  line-height:2.4em; background:none; color:#fff; width:100%;}
+@media screen and (max-width:460px) and (min-width:320px){
+	.form_btn a{font-size:1.6rem;}
+	.form_btn span .btn{font-size:1.6rem;}
+}
+/*-------申请条件------------*/
+.apply_condition li{width:49%; padding:2rem 1.2rem 0; height:12em; border:3px solid #cfcfcf; box-sizing:border-box;}
+.apply_condition li h3{padding-left:2.4em; background:url(https://staticcdn.zhudai.com/default/d/wap/semindex_apply_01.gif) no-repeat left center; border-bottom:1px solid #f1d2d5; line-height:1.8em; background-size:2em auto; margin-bottom:0.5em;}
+.apply_condition li.fr h3{background-image:url(https://staticcdn.zhudai.com/default/d/wap/semindex_apply_02.gif);}
+@media screen and (max-width:460px) and (min-width:320px){
+	.apply_condition li{padding:0.4rem;}
+}
+.Successe_con{padding:4% 20%;}
+.Successexplanation{font-size:1.6rem;}
+.Successe_con .form_btn a{font-size:2rem;}
+@media screen and (max-width:460px) and (min-width:320px){
+	.Successe_con{padding:4% 10%;}
+	.Successexplanation{font-size:1.4rem;}
+	.Successe_con .form_btn a{font-size:1.6rem;}
+}
+.mui-input-group2 label{width: 31%;height: 3.7rem;line-height: 3.7rem;font-size: 1.6rem; float: left;}
+.mui-input-group2 label span{color: red;}
+.mui-input-group2 .pingan .pdiv{float: left;width: 68%;}
+.mui-input-group2 .btn_three .pdiv{border:none;}
+.mui-input-group2 .reli .pdiv input{width: 100%; background: url(https://staticcdn.zhudai.com/default/d/wap/sem/images/rl_icon.png) no-repeat 95% center; background-size: 24px;}
+.mui-input-group2 .btn_three .pdiv .btn-default{border:1px #d2d2d2 solid;background: none;width: 30%;height: 3.7rem;line-height: 3.7rem;float: left; font-size: 1.5rem;border-radius: 4px;margin-left: 5%;}
+.mui-input-group2 .btn_three .pdiv .btn-default:first-child{margin-left: 0;}
+.mui-input-group2 .btn_three .pdiv .btn-active{color: white; background: #368ef1;border:1px #368ef1 solid;}
+.mui-input-group2 .btn_four label{width: 44%;height: 3.7rem;line-height: 3.7rem;font-size: 1.6rem; float: left;}
+.mui-input-group2 .btn_four .pdiv{float: left;width: 55%;}
+.mui-input-group2 .btn_four .pdiv{border:none;}
+.mui-input-group2 .btn_four .pdiv .btn-default{border:1px #d2d2d2 solid;background: none;width: 47%;height: 3.7rem;line-height: 3.7rem;float: left; font-size: 1.5rem;border-radius: 4px;margin-left: 5%;}
+.mui-input-group2 .btn_four .pdiv .btn-default:first-child{margin-left: 0;}
+.mui-input-group2 .btn_four .pdiv .btn-active{color: white; background: #368ef1;border:1px #368ef1 solid;}
+.mui-input-group2 .text_msg{text-align: center;color: #ff5c5c;line-height: 1.6rem; padding: 10px 0 0px;font-size: 1.4rem;}
+
+/*----平安新一代样式-----*/
+.pingan{padding:5% 2% 2% 2%;border:none}
+.pingan .pdiv{border:1px solid #d2d2d2;height:4.6rem;line-height:4.6rem}
+.pingan .pdiv input{width: 75%;height:4.6rem;padding-right:10px;padding-left:10px;font-size:1.8rem}
+.padb{background:#b71f2e;height:6rem;text-align: center; line-height: 6rem}
+.padb a{font-size: 2.4rem;color: #fff}
+.padb a:hover{color:#ffff00}
+
+.pingan .pdiv_arrow {
+	background: url(https://staticcdn.zhudai.com/default/d/wap/sem/images/right_g.png) no-repeat;
+	background-position: 96% 0.75rem;
+	background-size: 2rem;
+}
+
+/*------平安新一代推广页面------*/
+.sheninfo-top{width:100%;font-size:1.6rem;height:10rem;background:#fff}
+.sheninfo-left{width:40%;border-bottom:1px solid #d3d3d3;float:left}
+.sheninfo-right{width:40%;border-bottom:1px solid #d3d3d3;float:right}
+.xxxx{margin:5% 10%;}
+.khsx{width:50%;float:left;border-bottom:3px solid #e5e5e5;line-height: 6rem;height:6rem}
+.khsxzz{padding-bottom:4rem}
+.khsxzz li{margin-left:5%;line-height:3rem;font-size:1.5rem}
+.dbcli{background:#b71f2e;border:none;height: 6.3rem;color:#fff}
+
+.pingan .pdiv input{font-size: 1.6rem;}
+.pingan select{font-size: 1.6rem;}
+.mui-input-group2 label{width: 31%;height: 3.7rem;line-height: 3.7rem;font-size: 1.6rem; float: left;}
+.mui-input-group2 label span{color: red;}
+.mui-input-group2 .pingan .pdiv{float: left;width: 68%;}
+.mui-input-group2 .btn_three .pdiv{border:none;}
+.mui-input-group2 .reli .pdiv input{width: 100%; background: url(https://staticcdn.zhudai.com/default/d/wap/sem/images/rl_icon.png) no-repeat 95% center; background-size: 24px;}
+.mui-input-group2 .btn_three .pdiv .btn-default{border:1px #d2d2d2 solid;background: none;width: 30%;height: 3.7rem;line-height: 3.7rem;float: left; font-size: 1.5rem;border-radius: 4px;margin-left: 5%;}
+.mui-input-group2 .btn_three .pdiv .btn-default:first-child{margin-left: 0;}
+.mui-input-group2 .btn_three .pdiv .btn-active{color: white; background: #368ef1;border:1px #368ef1 solid;}
+.mui-input-group2 .btn_four label{width: 44%;height: 3.7rem;line-height: 3.7rem;font-size: 1.6rem; float: left;}
+.mui-input-group2 .btn_four .pdiv{float: left;width: 55%;}
+.mui-input-group2 .btn_four .pdiv{border:none;}
+.mui-input-group2 .btn_four .pdiv .btn-default{border:1px #d2d2d2 solid;background: none;width: 47%;height: 3.7rem;line-height: 3.7rem;float: left; font-size: 1.5rem;border-radius: 4px;margin-left: 5%;}
+.mui-input-group2 .btn_four .pdiv .btn-default:first-child{margin-left: 0;}
+.mui-input-group2 .btn_four .pdiv .btn-active{color: white; background: #368ef1;border:1px #368ef1 solid;}
+.mui-input-group2 .text_msg{text-align: center;color: #ff5c5c;line-height: 1.6rem; padding: 10px 0 0px;font-size: 1.4rem;}
+.form{margin-bottom: 0;padding-bottom: 0;}
+
+/*insurance*/
+.insurance{width: 96%;margin:10px auto;position: relative;margin-top: 12px;}
+.insurance .check_left{position: absolute;border: 1px #bfbfbf solid;z-index: 99;
+	top: 2px;left: 0; display: inline-block; width: 14px;height: 14px;
+	outline: 0!important;background-color: transparent;-webkit-appearance: none;}
+.insurance .check_left img{width: 100%;height: 100%;}
+.insurance .mui-card-content-inner{padding: 0 0 0 18px;line-height: 20px;color: #a3a3a3;}
+.insurance .mui-card-content-inner a{color: #a3a3a3;text-decoration: underline;}
+/*insurance*/
+
+/*security安全保障开始*/
+.security {position: fixed;width: 100%;height: 100%;z-index: 999;left: 0;top: 0;bottom: 0;display: none;right: 0;max-width: 640px;min-width: 320px;margin: auto;
+}
+.security .the_text h5{text-align: center;color: #358eef;font-size: 16px;font-weight: bold;}
+.security .header{background: none;box-shadow: none; position: absolute;top: 0;left: 10px;}
+.security .header h1{font-size: 16px;color: #358eef;font-weight:   700;}
+.security .mui-bar-nav .mui-pull-left{margin: 15px 5px;width:16px;height:16px;display:block;background: url(https://staticcdn.zhudai.com/default/d/wap/sem/images/fh_icon.png) no-repeat;}
+.security .the_text{width: 100%;height: 100%;overflow: auto;}
+.security .the_text .mui-card-content-inner{background-color: white;padding:16px 15px 26px 15px;}
+.security .the_text .mui-card-content-inner h6{line-height: 20px;font-weight: bold;color: #358eef;font-size: 14px;}
+.security .mui-card-content-inner .summary_in{margin-top: 15px;}
+.security .mui-card-content-inner .summary_in p{line-height: 20px;margin-bottom: 0;font-size: 14px;color: #666666;}
+/*security安全保障结束*/
+
+/*sem23_wap页面insur*/
+/*sem_wap.html,*/
+.insur{width: 96%;margin:10px auto;position: relative;margin-top: 12px;}
+.insur .check_left{position: absolute;border: 1px #bfbfbf solid;z-index: 99;
+	top: 2px;left: 0; display: inline-block; width: 14px;height: 14px;
+	outline: 0!important;background-color: transparent;-webkit-appearance: none;}
+.insur .check_left img{width: 100%;height: 100%;}
+.insur .mui-card-content-inner{padding: 0 0 0 18px;line-height: 20px;color: #a3a3a3;}
+.insur .mui-card-content-inner a{color: #358eef;}
+/*insur*/
+
+/*sem23_wap页面security安全保障开始,蓝色文字，蓝色图标*/
+.secur {position: fixed;width: 100%;height: 100%;z-index: 999;left: 0;top: 0;bottom: 0;display: none;right: 0;max-width: 640px;min-width: 320px;margin: auto;
+}
+.secur .the_text h5{text-align: center;color: #358eef;font-size: 16px;font-weight: bold;}
+.secur .header{background: none;box-shadow: none; position: absolute;top: 0;left: 10px;}
+.secur .header h1{font-size: 16px;color: #358eef;font-weight:   700;}
+.secur .mui-bar-nav .mui-pull-left{margin: 15px 5px;width:16px;height:16px;display:block;background: url(https://staticcdn.zhudai.com/default/d/wap/sem/images/fh_icon.png) no-repeat;}
+.secur .the_text{width: 100%;height: 100%;overflow: auto;}
+.secur .the_text .mui-card-content-inner{background-color: white;padding:16px 15px 26px 15px;}
+.secur .the_text .mui-card-content-inner h6{line-height: 20px;font-weight: bold;color: #358eef;font-size: 14px;}
+.secur .mui-card-content-inner .summary_in{margin-top: 15px;}
+.secur .mui-card-content-inner .summary_in p{line-height: 20px;margin-bottom: 0;font-size: 14px;color: #666666;}
+/*secur安全保障结束*/
+
